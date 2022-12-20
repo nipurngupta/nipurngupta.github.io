@@ -6,7 +6,7 @@
 * Passionate about cooking North Indian food.
 
 📊 Data Science Projects
-* How to Increase Market Share with Bellabeat Fitness Data (R + Microsoft Powerpoint)
+* [Identify trends in usage of smart devices for Bellabeat's marketing team (R + Microsoft Powerpoint)](https://github.com/nipurngupta/nipurngupta.github.io/tree/main/Projects/Project%2001%20-%20Bellabeat)
 
 📫 Kaggle and Tableau
 * Kaggle Account
