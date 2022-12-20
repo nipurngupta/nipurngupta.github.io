@@ -786,7 +786,7 @@ I have documented the cleaning process for review.
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](Bellabeat-Case-Study--by-Nipurn-_files/figure-markdown_strict/Plotting%20Data%20between%20Total%20steps%20and%20Sedentary%20minutes-1.png)
+![](images/Plotting%20Data%20between%20Total%20steps%20and%20Sedentary%20minutes-1.png)
 
 **Observations:**
 
@@ -801,7 +801,7 @@ I have documented the cleaning process for review.
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](Bellabeat-Case-Study--by-Nipurn-_files/figure-markdown_strict/Plotting%20Data%20between%20very%20active%20minutes%20&%20calories-1.png)
+![](images/Plotting%20Data%20between%20very%20active%20minutes%20&%20calories-1.png)
 
 **Observations:**
 
@@ -843,7 +843,7 @@ I have documented the cleaning process for review.
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](Bellabeat-Case-Study--by-Nipurn-_files/figure-markdown_strict/Plotting%20Data%20between%20total%20steps%20&%20calories-1.png)
+![](images/Plotting%20Data%20between%20total%20steps%20&%20calories-1.png)
 
 **Observations:**
 
@@ -912,15 +912,15 @@ I have documented the cleaning process for review.
 
     ggplot(data=hourly_mean, aes(x=time, y=mean_calories, fill=mean_calories)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45))
 
-![](Bellabeat-Case-Study--by-Nipurn-_files/figure-markdown_strict/Plotting%20time%20users%20were%20most%20active-1.png)
+![](images/Plotting%20time%20users%20were%20most%20active-1.png)
 
     ggplot(data=hourly_mean, aes(x=time, y=mean_intensity, fill=mean_intensity)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45))
 
-![](Bellabeat-Case-Study--by-Nipurn-_files/figure-markdown_strict/Plotting%20time%20users%20were%20most%20active-2.png)
+![](images/Plotting%20time%20users%20were%20most%20active-2.png)
 
     ggplot(data=hourly_mean, aes(x=time, y=mean_steps, fill=mean_steps)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45))
 
-![](Bellabeat-Case-Study--by-Nipurn-_files/figure-markdown_strict/Plotting%20time%20users%20were%20most%20active-3.png)
+![](images/Plotting%20time%20users%20were%20most%20active-3.png)
 
 **Observations:**
 
@@ -933,7 +933,7 @@ I have documented the cleaning process for review.
 
     ggplot(data=sleep_day) + geom_point(mapping=aes(x=total_minutes_asleep, y=total_time_in_bed, color=total_minutes_asleep))
 
-![](Bellabeat-Case-Study--by-Nipurn-_files/figure-markdown_strict/Relationship%20between%20time%20in%20bed%20and%20minutes%20asleep-1.png)
+![](images/Relationship%20between%20time%20in%20bed%20and%20minutes%20asleep-1.png)
 
 **Observations:**
 
