@@ -1,0 +1,467 @@
+---
+title: "How Can a Wellness Technology Company Play It Smart?"
+author: "Nipurn"
+date: "2022-12-14"
+output: html_document
+---
+
+## Introduction and background
+
+![](images/paste-E79330DA.png)
+
+-   For this case study, we are tasked to assist the marketing team at Bellabeat, a high-tech manufacturer of health-focused products for women.
+-   Urška Sršen, cofounder and Chief Creative Officer of Bellabeat, believes that analyzing smart device fitness data could help unlock new growth opportunities for the company.
+-   We have been asked to focus on one of Bellabeat's products and analyze smart device data to gain insight into how consumers are using their smart devices.
+-   The insights you discover will then help guide marketing strategy for the company.
+-   We will present our analysis to the Bellabeat executive team along with our high-level recommendations for Bellabeat's marketing strategy.
+
+## Phase 1 - Ask
+
+**Business Task** - Identify trends in usage of smart devices to make recommendations to marketing team for growth opportunities.\
+**Key Stakeholders** - Urška Sršen, Sando Mur and Bellabeat marketing analytics team
+
+## Phase 2 - Prepare
+
+-   The data is stored in public domain, hosted at Kaggle by Mobius. [(Source)](https://www.kaggle.com/datasets/arashnic/fitbit)
+-   **ROCCC Analysis** -
+    -   Reliability - Data is crowdsourced. Acceptable.
+    -   Original - The data is collected from survey data via Amazon Mechanical Turk. Acceptable.
+    -   Comprehensive - The data comprises activity log ranging from seconds to days, but only for a period of 31 days. Okay.
+    -   Current - Data is outdated, as it was collected between 04/12/2016 - 05/12/2016. Bad.
+    -   Cited - No citations available. Bad.
+-   **Integrity** - Data is collected through a survey. Unable to ascertain the integrity of data.
+-   **Licensing** - Data is publicly available, crowdsourced.
+-   **Privacy & Security** - There are no personal identifiers in the data. The data is tagged with 'id'.
+-   **Help answer your question?** - The dataset contains data for personal habits relating to steps, calories, heart rate, sleep and weight. It can be used to explore trends.
+-   **Any problems with data?** - The sample size of 30 users does not represent the entire smart device users' population. Furthermore, the dataset is 6 years old and the trends will have most likely have evolved over the years.
+-   **Dataset organization** -
+    -   There are 18 files in the dataset, containing data for 33 Fitbit users.
+    -   Minute data x8
+        -   Steps (long & wide), calories (long & wide), intensity (long & wide). **\~ maybe too specific for marketing-based insights**
+    -   Hourly data x3
+        -   Calories, Intensities, Steps (long) **\~ could be useful to understand what time of the day users were most active**
+    -   Daily data x4
+        -   Daily activity (long) - comprising of Steps + calories and intensity
+        -   Calories, intensity, Steps (long)
+    -   Heartrate (by seconds) data x1 **\~ maybe too specific for marketing-based insights**
+    -   Sleep (by day) x1
+    -   Weight log (by day) x1
+
+## Phase 3 - Process
+
+### Setting up environment
+
+```{r Setting environment}
+library(tidyverse)
+library(janitor)
+```
+
+### Importing CSV files
+
+```{r Importing daily csv datafiles}
+setwd("D:/RStudio/Bellabeat")
+daily_activity <- read_csv("dailyActivity_merged.csv")
+daily_calories <- read_csv("dailyCalories_merged.csv")
+daily_intensities <- read_csv("dailyIntensities_merged.csv")
+daily_steps <- read_csv("dailySteps_merged.csv")
+
+glimpse(daily_activity)
+glimpse(daily_calories)
+glimpse(daily_intensities)
+glimpse(daily_steps)
+```
+
+-   At first glance, it seems daily_activity is a consolidated dataframe of daily_calories, daily_intensities and daily_steps. Let us verify.
+
+```{r Checking for duplicate records - daily datasets}
+dailyact_calories <- daily_activity %>% 
+  rename(ActivityDay = ActivityDate) %>% 
+   select(Id, ActivityDay, Calories)
+
+data_common1 <- inner_join(dailyact_calories, daily_calories)
+glimpse(data_common1)
+
+dailyact_intensities <- daily_activity %>% 
+    rename(ActivityDay = ActivityDate) %>% 
+    select(Id, ActivityDay, SedentaryMinutes, LightlyActiveMinutes, FairlyActiveMinutes, VeryActiveMinutes, SedentaryActiveDistance, LightActiveDistance, ModeratelyActiveDistance, VeryActiveDistance)
+data_common2 <- inner_join(dailyact_intensities, daily_intensities)
+glimpse(data_common2)
+
+dailyact_steps <- daily_activity %>% 
+      rename(ActivityDay = ActivityDate) %>% 
+  select(Id, ActivityDay, TotalSteps)
+data_common3 <- inner_join(dailyact_steps, daily_steps)
+glimpse(data_common3)
+```
+
+-   It can be safely concluded that daily_activity is a consolidated dataframe, comprising data from daily_calories, daily_intensities and daily_steps dataframes. We can remove the latter 3 dataframes.
+
+```{r Importing other datafiles}
+# Importing other dataframes
+hourly_calories <- read_csv("hourlyCalories_merged.csv")
+hourly_intensities <- read_csv("hourlyIntensities_merged.csv")
+hourly_steps <- read_csv("hourlySteps_merged.csv")
+sleep_day <- read_csv("sleepDay_merged.csv")
+weight_log <- read_csv("weightLogInfo_merged.csv")
+
+glimpse(hourly_calories)
+glimpse(hourly_intensities)
+glimpse(hourly_steps)
+glimpse(sleep_day)
+glimpse(weight_log)
+```
+
+### Cleaning Data
+
+#### Check for Null values
+
+```{r Check for Null values}
+sum(is.na(daily_activity))
+sum(is.na(hourly_calories))
+sum(is.na(hourly_intensities))
+sum(is.na(hourly_steps))
+sum(is.na(sleep_day))
+sum(is.na(weight_log))
+```
+
+-   The 'Fat' column in weight_log has a lot of Null values.
+
+#### Check for duplicate values
+
+```{r Check for duplicate values}
+sum(duplicated(daily_activity))
+sum(duplicated(hourly_calories))
+sum(duplicated(hourly_intensities))
+sum(duplicated(hourly_steps))
+sum(duplicated(sleep_day))
+sum(duplicated(weight_log))
+
+#Remove duplicate values from sleep_day dataframe
+sleep_day <- sleep_day %>% 
+  distinct()
+```
+
+#### Standardizing column names
+
+```{r Cleaning dataframe column names}
+#Cleaning dataframe column names
+
+daily_activity <- daily_activity %>% 
+  clean_names() %>% 
+  rename(date = activity_date)
+
+hourly_calories <- hourly_calories %>% 
+  clean_names() %>% 
+  rename(date = activity_hour)
+
+hourly_intensities <- hourly_intensities %>% 
+  clean_names() %>% 
+  rename(date = activity_hour)
+
+hourly_steps <- hourly_steps %>% 
+  clean_names() %>% 
+  rename(date = activity_hour)
+
+sleep_day <- sleep_day %>% 
+  clean_names() %>% 
+  rename(date = sleep_day)
+
+weight_log <- clean_names(weight_log)
+```
+
+#### Fixing datatypes of columns
+
+```{r Changing datatypes of columns}
+# Changing datatype of date columns
+
+daily_activity <- daily_activity %>% 
+  mutate(date = as.Date(date, "%m/%d/%Y"))
+
+## hourly_calories dataframe
+#format date column from char to date-time
+hourly_calories$date = as.POSIXct(hourly_calories$date, format = "%m/%d/%Y %I:%M:%S %p")
+
+#create new column named 'time' extracting time from date column
+hourly_calories$time <- format(hourly_calories$date, format = "%H:%M:%S")
+
+
+## hourly_intensities dataframe
+#format date column from char to date-time
+hourly_intensities$date = as.POSIXct(hourly_intensities$date, format = "%m/%d/%Y %I:%M:%S %p")
+
+#create new column named 'time' extracting time from date column
+hourly_intensities$time <- format(hourly_intensities$date, format = "%H:%M:%S")
+
+
+## hourly_steps dataframe
+#format date column from char to date-time
+hourly_steps$date = as.POSIXct(hourly_steps$date, format = "%m/%d/%Y %I:%M:%S %p")
+
+#create new column named 'time' extracting time from date column
+hourly_steps$time <- format(hourly_steps$date, format = "%H:%M:%S")
+
+
+## sleep_day dataframe
+sleep_day <- sleep_day %>% 
+  mutate(date = as.Date(date, format="%m/%d/%Y"))
+
+
+## weight_log dataframe
+weight_log <- weight_log %>% 
+  mutate(date = as.Date(date, format="%m/%d/%Y"))
+```
+
+#### Final check for dataframes
+
+```{r Final Check for dataframes}
+head(daily_activity)
+head(hourly_calories)
+head(hourly_intensities)
+head(hourly_steps)
+head(sleep_day)
+head(weight_log)
+```
+
+### Guiding Questions
+
+**What tools are you choosing and why?**\
+I'm choosing to work with R, as it is accessible to import, clean, process, analyze and visualize dataframes.\
+**What steps have you taken to ensure that your data is clean?**\
+I have checked for null data, duplicate entries, formatted column names and fixed datatypes for date columns.\
+**How can you verify that your data is clean and ready to analyze?**\
+I have double-checked the data post cleaning.\
+**Have you documented your cleaning process so you can review and share those results?**\
+I have documented the cleaning process for review.
+
+## Phase 4 - Analyze
+
+### Quick Summary Statistics
+
+```{r Analyzing Participants in Data}
+# Analyzing Participants 
+n_distinct(daily_activity$id)
+n_distinct(hourly_calories$id)
+n_distinct(hourly_intensities$id)
+n_distinct(hourly_steps$id)
+n_distinct(sleep_day$id)
+n_distinct(weight_log$id)
+```
+
+-   sleep_day dataframe has data for 24 and weight_log has data for 8 participants, while rest have data for 33 participants.
+
+```{r Analyzing observations in Data}
+# Analyzing no. of observations
+nrow(daily_activity)
+nrow(hourly_calories)
+nrow(hourly_intensities)
+nrow(hourly_steps)
+nrow(sleep_day)
+nrow(weight_log)
+
+```
+
+```{r Summary Statistics}
+# Summary Statistics
+daily_activity %>% 
+  summary()
+
+hourly_calories %>% 
+  summary()
+
+hourly_intensities %>% 
+  summary()
+
+hourly_steps %>% 
+  summary()
+
+sleep_day %>% 
+  summary()
+
+weight_log %>% 
+  summary()
+```
+
+### Plotting Data
+
+#### Relationship between Total steps and sedentary minutes
+
+```{r Plotting Data between Total steps and Sedentary minutes}
+ggplot(data=daily_activity) + geom_point(mapping=aes(x=total_steps, y=sedentary_minutes, color=calories)) + 
+  geom_smooth(mapping=aes(x=total_steps, y=sedentary_minutes))
+```
+
+**Observations:**
+
+-   No trend is observed between total steps and inactive minutes.
+
+-   No relationship between calories burnt and inactive minutes.
+
+#### Relationship between very active minutes & calories
+
+```{r Plotting Data between very active minutes & calories}
+ggplot(data=daily_activity) + geom_point(mapping=aes(x=very_active_minutes, y=calories, color=very_active_distance)) +
+  geom_smooth(mapping=aes(x=very_active_minutes, y=calories))
+```
+
+**Observations:**
+
+-   A positive relation between very active minutes and calories burnt.
+
+#### Average distribution of active minutes, by percentage
+
+```{r Average distribution of activity by percentage}
+total_sums <- daily_activity %>% 
+  summarize(total_sm = sum(sedentary_minutes), total_lam = sum(lightly_active_minutes), total_fam=sum(fairly_active_minutes), total_vam=sum(very_active_minutes))
+
+total_tm <- total_sums %>% 
+  summarize(sum(total_sm, total_lam, total_fam, total_vam))
+
+average_tm <- total_sums %>% 
+  summarize(avg_sm = (total_sm/total_tm)*100, avg_lam = (total_lam/total_tm)*100, avg_fam = (total_fam/total_tm)*100, avg_vam = (total_vam/total_tm)*100)
+
+average_tm
+```
+
+**Observations:**
+
+-   81.3% is occupied by sedentary minutes.
+
+-   Only 1.74% of activity is occupied by very active minutes.\
+
+#### Relationship between total steps & calories
+
+```{r Plotting Data between total steps & calories}
+ggplot(data=daily_activity) + geom_point(mapping=aes(x=total_steps, y=calories, color=total_distance)) +
+  geom_smooth(mapping=aes(x=total_steps, y=calories))
+```
+
+**Observations:**
+
+-   A positive relationship between total steps and calories burnt.
+
+#### Determining the time users were most active
+
+```{r Plotting time users were most active}
+#Merging hourly datasets
+
+hcal_mean <- hourly_calories %>% 
+  group_by(time) %>% 
+  summarize(mean_calories = mean(calories))
+head(hcal_mean)
+
+hint_mean <- hourly_intensities %>% 
+  group_by(time) %>% 
+  summarize(mean_intensity = mean(total_intensity))
+head(hint_mean)
+
+hsteps_mean <- hourly_steps %>% 
+  group_by(time) %>% 
+  summarize(mean_steps = mean(step_total))
+head(hsteps_mean)
+
+hourly_mean <- merge(hcal_mean, hint_mean, by.x="time", by.y="time")
+hourly_mean <- merge(hourly_mean, hsteps_mean, by.x="time", by.y="time")
+head(hourly_mean)
+
+ggplot(data=hourly_mean, aes(x=time, y=mean_calories, fill=mean_calories)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45))
+ggplot(data=hourly_mean, aes(x=time, y=mean_intensity, fill=mean_intensity)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45))
+ggplot(data=hourly_mean, aes(x=time, y=mean_steps, fill=mean_steps)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45))
+```
+
+**Observations:**
+
+-   Participants were most active between 16:00-18:59 hours followed by 11:00-13:59 hours.
+
+-   As expected, calories were least burnt between 23:00-04:59 hours.
+
+#### Relationship between time in bed and minutes asleep
+
+```{r Relationship between time in bed and minutes asleep}
+ggplot(data=sleep_day) + geom_point(mapping=aes(x=total_minutes_asleep, y=total_time_in_bed, color=total_minutes_asleep))
+```
+
+**Observations:**
+
+-   A positive linear relationship is observed between total time in bed and total minutes asleep.
+
+-   Furthermore, few participants seem to have spent a lot of time in bed but didn't asleep. The team could work to focus on sleep or insomnia related apps.
+
+-   Out of 33 participants, 24 participants had logged their sleep activity. More marketing content towards sleep tracking features.
+
+#### Trends with weight tracking
+
+**Observations:**
+
+-   Only 8 participants logged their weight in the Fitbit app, in contrast to 33 users logging their daily activities.
+
+-   Bellabeat's app could implement push notification services to encourage users to push for increased weight tracking.
+
+## Phase 5 - Share
+
+### 1. Average Distribution of Active Minutes
+
+![](images/Avg%20Dist%20of%20Active%20Minutes.png)
+
+#### Findings:
+
+-   Insights indicate most participants used the Fitbit app to track inactive moments such as daily work, commute etc. (approximately 81.3%).
+
+-   Marketing could push for campaigns such as small workout sessions between work, or encourage taking small walk breaks between work or leisure hours, such as taking a walk break every 30 minutes, encouraging more users to walk and track their fitness.
+
+### 2. Most Active Times of the Day
+
+![](images/Sheet%201.png)
+
+#### Findings:
+
+-   Participants were found to be most active between evening hours of 16:00-18:59 hours burning most calories, taking maximum no. of steps, with highest intensity during this time period. 2nd most active period was around lunch hours 12:00-14:59.
+
+-   Surprisingly, the data indicates of calories being burnt during not-so intensive inactive time periods, which was tracked by the Fitbit app.
+
+-   It could be suggested to market efficient health tracking and calorie tracking features by fitness devices, along with benefits of how proper sleep results in burning of calories.
+
+### 3. Sleep Tracking
+
+![](images/Sheet%202.png)
+
+#### Findings:
+
+-   As anticipated, the data indicates a strict positive relationship between Total Time in Bed and Total Minutes asleep.
+
+-   Furthermore, few participants seem to have spent a lot of time in bed but didn't asleep. The team could work to focus on sleep or insomnia related apps.
+
+-   Out of 33 participants, only 24 participants had logged their sleep activity. Marketing strategies encompassing sleep tracking features and benefits of sleep tracking could be adopted.
+
+### 4. Comparison of Activity Tracking
+
+![](images/Sheet%203.png)
+
+#### Findings:
+
+-   While the sample size of 33 is not representative of the population, the data indicates Calorie and Sleep tracking to be the most popular Fitbit features used by participants.
+
+-   Bellabeat's marketing strategies could be guided to encourage participants for weight tracking and its benefits.
+
+-   As a product suggestion, Smart Weight Measuring Scales could be introduced.
+
+## Phase 6 - Act
+
+### Trends in Smart device usage
+
+-   Most participants used their FitBit app to track more than 80% of the sedentary minutes.
+
+-   Less than 3% of the time is spent in active or intense workouts.
+
+-   Participants were most active during evening hours between 16:00 to 18:59 hours and 12:00 to 14:59 hours.
+
+-   Step and Calorie tracking are the most popular Fitbit features. Weight tracking is the least popular feature.
+
+### Application of these trends in Bellabeat's marketing strategy
+
+-   Both Fitbit and Bellabeat are engaged in the digital fitness industry. Bellabeat's products could be used to encourage customers for health tracking by highlighting the benefits of smart-devices.
+
+-   Benefits of sleep and weight tracking could be marketed with smart-watches and smart weighing scales, along with benefits of how proper sleep results in burning of calories. Proper sleep = active health.
+
+-   Marketing could push for campaigns such as quick workouts between work, or encourage taking small walk breaks between work or leisure hours, such as taking a walk break every 30 minutes, encouraging more users to walk and track their fitness.
+
+-   As the app is used to track more than 80% of sedentary activity, marketing campaigns highlighting, 'Why being seated for long hours is bad for health' could be strongly pushed.
