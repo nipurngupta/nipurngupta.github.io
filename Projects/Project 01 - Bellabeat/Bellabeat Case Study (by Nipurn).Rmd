@@ -59,7 +59,6 @@ library(janitor)
 ### Importing CSV files
 
 ```{r Importing daily csv datafiles}
-setwd("D:/RStudio/Bellabeat")
 daily_activity <- read_csv("dailyActivity_merged.csv")
 daily_calories <- read_csv("dailyCalories_merged.csv")
 daily_intensities <- read_csv("dailyIntensities_merged.csv")
