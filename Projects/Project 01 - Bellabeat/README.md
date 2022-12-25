@@ -966,11 +966,11 @@ I have documented the cleaning process for review.
 
 ### Bellabeat Analysis Summary (in R)
 
-### 1. Average Distribution of Active Minutes
+#### 1. Average Distribution of Active Minutes
 
 ![](images/Avg%20Dist%20of%20Active%20Minutes.png)
 
-#### Findings:
+##### Findings:
 
 -   Insights indicate most participants used the Fitbit app to track
     inactive moments such as daily work, commute etc. (approximately
@@ -981,11 +981,11 @@ I have documented the cleaning process for review.
     leisure hours, such as taking a walk break every 30 minutes,
     encouraging more users to walk and track their fitness.
 
-### 2. Most Active Times of the Day
+#### 2. Most Active Times of the Day
 
 ![](images/Sheet%201.png)
 
-#### Findings:
+##### Findings:
 
 -   Participants were found to be most active between evening hours of
     16:00-18:59 hours burning most calories, taking maximum no. of
@@ -1000,11 +1000,11 @@ I have documented the cleaning process for review.
     calorie tracking features by fitness devices, along with benefits of
     how proper sleep results in burning of calories.
 
-### 3. Sleep Tracking
+#### 3. Sleep Tracking
 
 ![](images/Sheet%202.png)
 
-#### Findings:
+##### Findings:
 
 -   As anticipated, the data indicates a strict positive relationship
     between Total Time in Bed and Total Minutes asleep.
@@ -1017,11 +1017,11 @@ I have documented the cleaning process for review.
     activity. Marketing strategies encompassing sleep tracking features
     and benefits of sleep tracking could be adopted.
 
-### 4. Comparison of Activity Tracking
+#### 4. Comparison of Activity Tracking
 
 ![](images/Sheet%203.png)
 
-#### Findings:
+##### Findings:
 
 -   While the sample size of 33 is not representative of the population,
     the data indicates Calorie and Sleep tracking to be the most popular
