@@ -448,7 +448,7 @@ Creating new columns:
     ## `summarise()` has grouped output by 'member_casual'. You can override using the
     ## `.groups` argument.
 
-![](Case-Study---Bike-share-analysis---Cyclistic_files/figure-markdown_strict/visualing%20ridership%20data-1.png)
+![](images/visualing%20ridership%20data-1.png)
 
     #Visualizing for average duration
     bikeshare_data %>% 
@@ -461,7 +461,7 @@ Creating new columns:
     ## `summarise()` has grouped output by 'member_casual'. You can override using the
     ## `.groups` argument.
 
-![](Case-Study---Bike-share-analysis---Cyclistic_files/figure-markdown_strict/visualing%20ridership%20data-2.png)
+![](images/visualing%20ridership%20data-2.png)
 
     #Exporting as CSV for further analysis
     weekly_sum_avg <- bikeshare_data %>% 
