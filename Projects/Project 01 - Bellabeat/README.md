@@ -959,6 +959,10 @@ I have documented the cleaning process for review.
 
 ## Phase 5 - Share
 
+### [Bellabeat Analysis - Presentation](https://github.com/nipurngupta/nipurngupta.github.io/blob/main/Projects/Project%2001%20-%20Bellabeat/Bellabeat%20Presentation.pptx)
+
+![](/images/Presentation%20Caption.png)
+
 ### 1. Average Distribution of Active Minutes
 
 ![](images/Avg%20Dist%20of%20Active%20Minutes.png)
