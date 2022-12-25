@@ -11,7 +11,7 @@
 -   We have been asked to focus on one of Bellabeat’s products and
     analyze smart device data to gain insight into how consumers are
     using their smart devices.
--   The insights you discover will then help guide marketing strategy
+-   The insights we discover will then help guide marketing strategy
     for the company.
 -   We will present our analysis to the Bellabeat executive team along
     with our high-level recommendations for Bellabeat’s marketing
