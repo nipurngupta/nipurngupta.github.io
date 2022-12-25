@@ -963,6 +963,9 @@ I have documented the cleaning process for review.
 
 ![](images/Presentation%20Caption.png)
 
+
+### Bellabeat Analysis Summary (in R)
+
 ### 1. Average Distribution of Active Minutes
 
 ![](images/Avg%20Dist%20of%20Active%20Minutes.png)
